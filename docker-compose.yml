@@ -1,0 +1,23 @@
+version: '3'
+services:
+  certbot:
+    build: certbot-img/.  # Build custom certbot image, auto-renew
+    container_name: certbot
+    restart: unless-stopped
+    volumes:
+      - ./cert:/etc/letsencrypt          # Certificates
+      - ./certbot-www:/var/www/certbot   # ACME challange
+  nginx:
+    image: nginx:1.21.0-alpine
+    container_name: nginx
+    restart: unless-stopped
+    depends_on:
+      - certbot
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+#      - ./nginx.conf:/etc/nginx/nginx.conf # Uncomment to use custom nginx.conf
+      - ./conf.d:/etc/nginx/conf.d
+      - ./cert:/etc/letsencrypt:ro         # Certificates from certbot
+      - ./certbot-www:/var/www/certbot:ro  # ACME challange files when certbot renews
