@@ -1,3 +1,7 @@
 #!/bin/sh
 
-certbot --quiet renew --webroot -w /var/www/certbot
+echo "----------------------------------------"
+echo $(date)
+echo
+certbot renew --webroot -w /var/www/certbot
+
